@@ -1,5 +1,5 @@
 <?php
-//if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
 
     define('MODX_API_MODE', true);
     include_once(dirname(__FILE__) . "../../../../index.php");
@@ -12,7 +12,6 @@
     if (isset($_POST['action'])) {
         $action = $modx->db->escape($_POST['action']);
         switch ($action) {
-            
             case 'eFavorite':
                 $params = array();
                 if (isset($_POST['lifetime'])) {
@@ -28,10 +27,7 @@
             break;
         }
         echo $output;
-
-}
-
-
+    }
 exit;
-//}
+}
 exit;

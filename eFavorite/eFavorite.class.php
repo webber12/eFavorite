@@ -85,6 +85,5 @@ class eFavorite
                     })
                 }</script>", array('plaintext' => true));
         }
-    }
-    
+    } 
 }
