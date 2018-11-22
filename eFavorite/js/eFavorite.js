@@ -5,13 +5,14 @@ var eFavorite = {
         elementTotalId: 'favorits_cnt',
         elementClass: 'favorite',
         elementActiveClass: 'active',
-        lifetime: 2592000
+        lifetime: 2592000,
+        className: 'eFavorite'
     },
     action: function(id, obj) {
         var self = this;
         var id = (!!id) ? id : '';
         var obj = (!!obj) ? obj : false;
-        var data2 = 'action=eFavorite&lifetime=' + this.params.lifetime;
+        var data2 = 'action=eFavorite&lifetime=' + this.params.lifetime + '&className=' + this.params.className;
         if (id != '') {
             data2 += '&id=' + id;
         }

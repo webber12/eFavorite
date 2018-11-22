@@ -17,8 +17,10 @@ if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && !empty($_SERVER['HTTP_X_REQUESTED
                 if (isset($_POST['lifetime'])) {
                     $params['lifetime'] = (int)$_POST['lifetime'];
                 }
-                require_once "eFavorite.class.php";
-                $eFavorite = new eFavorite\eFavorite($modx, $params);
+                $className = isset($_POST['className']) ? $modx->db->escape($_POST['className']) : 'eFavorite';
+                $class = "eFavorite\\" . $className;
+                require_once $className . ".class.php";
+                $eFavorite = new $class($modx, $params);
                 $eFavorite->recountFavorites();
                 $output .= $eFavorite->getFavoriteDocRows();
             break;

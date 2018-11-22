@@ -69,7 +69,7 @@ class eFavorite
         $script = 'var eFavoriteParams = {};';
         $defaults = array('lifetime' => $this->lifetime);
         $params = array_merge($defaults, $params);
-        $js_params = array('addText', 'removeText', 'elementTotalId', 'elementClass', 'elementActiveClass', 'lifetime');
+        $js_params = array('addText', 'removeText', 'elementTotalId', 'elementClass', 'elementActiveClass', 'lifetime', 'className');
         foreach ($params as $k => $v) {
             if (in_array($k, $js_params)) {
                 $script .= 'eFavoriteParams.' . $k . ' = "' . $v . '";';
