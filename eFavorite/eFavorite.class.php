@@ -61,7 +61,7 @@ class eFavorite
 
     public function getDocList()
     {
-        return !empty($this->f) ? implode(',', $this->f) : '1200000000';
+        return !empty($this->f) ? implode(',', $this->f) : '4294967295';
     }
 
     public function initJS($params)
