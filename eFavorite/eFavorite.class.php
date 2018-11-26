@@ -31,13 +31,11 @@ class eFavorite
             if (!in_array($id, $f)) {
                 $f[] = $id;
             } else {
-                $key = array_search($id, $f);
-                if ($key || $key == 0) {
-                    if (count($f) == 1) {
+                if (count($f) == 1) {
                         $f = array();
-                    } else {
-                        unset($f[$key]);
-                    }
+                } else {
+                    $key = array_search($id, $f);
+                    unset($f[$key]);
                 }
             }
         }
