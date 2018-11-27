@@ -32,10 +32,29 @@
 [!eFavorite? &setDocsForeFilterOnPage=`5`!]
 установит дополнительный плейсхолдер [+eFilter_search_ids+] на странице с id=5, который будет использоваться при формировании вывода [!eFilter!]
 
+при необходимости вывода списка - ПОВТОРНО вызвать в нужном месте с обычными параметрами DocLister
+[!eFavorite? &tpl=`@CODE:[+pagetitle+]<hr>`!]
+
 */
 
 
 $out = '';
+
+//повторный вызов - выводим список
+$eFavoriteDocs = $modx->getPlaceholder('eFavoriteDocs');
+if ($eFavoriteDocs && !empty($eFavoriteDocs)) {
+    if (isset($params['parents'])) {
+        //задан parents - передаем список id как доп.условие - для показа "избранного из категории"
+        $params['addWhereList'] = isset($params['addWhereList']) ? $params['addWhereList'] . ' AND c.id IN(' . $eFavoriteDocs . ')' : ' c.id IN(' . $eFavoriteDocs . ') ';
+    } else {
+        //иначе передаем в documents - для вывода полного списка избранного
+        $params['documents'] = $eFavoriteDocs;
+    }
+    $out .= $modx->runSnippet("DocLister", $params);
+    return $out;
+}
+
+//иначе - первичный вызов, инициализируем скрипты и плейсхолдеры
 $className = isset($params['className']) ? $params['className'] : 'eFavorite';
 require_once MODX_BASE_PATH . "assets/snippets/eFavorite/" . $className . ".class.php";
 $class = "eFavorite\\" . $className;
@@ -44,6 +63,6 @@ $eFavorite->initJS($params);
 $docs = $eFavorite->getDocList();
 $modx->setPlaceholder('eFavoriteDocs', $docs);
 if (isset($params['setDocsForeFilterOnPage']) && $params['setDocsForeFilterOnPage'] == $modx->documentIdentifier) {
-	$modx->setPlaceholder('eFilter_search_ids', $docs);
+    $modx->setPlaceholder('eFilter_search_ids', $docs);
 }
 return $out;
