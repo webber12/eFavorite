@@ -15,7 +15,7 @@ class eFavorite
         } else {
             $this->id = isset($this->params['id']) ? $this->modx->db->escape($this->params['id']) : 'favorite';
         }
-        $this->cookieName = isset($this->params['cookieName']) ? $this->modx->db->escape($this->params['cookieName']) : 'eFavorite_' . $this->id;
+        $this->cookieName = 'eFavorite_' . $this->id;
         $this->f = $this->getFavorites();
         $this->lifetime = isset($this->params['lifetime']) ? (int)$this->params['lifetime'] : 60 * 60 * 24 * 30;
         return $this;
