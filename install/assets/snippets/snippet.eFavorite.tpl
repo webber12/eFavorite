@@ -6,7 +6,7 @@
  *
  * @author      webber (web-ber12@yandex.ru)
  * @category    snippet
- * @version     0.1
+ * @version     0.2
  * @license     http://www.gnu.org/copyleft/gpl.html GNU Public License (GPL)
  * @internal    @modx_category Content
  * @internal    @installset base, sample
@@ -35,13 +35,26 @@
 при необходимости вывода списка - ПОВТОРНО вызвать в нужном месте с обычными параметрами DocLister
 [!eFavorite? &tpl=`@CODE:[+pagetitle+]<hr>`!]
 
+
+для организации нескольких списков - избранное, вишлист, сравнение - можно вызывать несколько сниппетов с разными id и разными параметрами
+в хидере
+[!eFavorite!] //- для организации избранного
+[!eFavorite? &id=`wishlist` &elementTotalId=`total` &elementClass=`wishlist` &addText=`добавить в wishlist` &removeText=`удалить из wishlist` &lifetime=`2592002`!] //- для wishlist
+
+на странице показа избранного дополнительный вызов
+[!eFavorite!]
+
+на странице показа wishlist дополнительный вызов
+[!eFavorite? &id=`wishlist`!]
+
 */
 
 
 $out = '';
+$id = isset($id) ? $id :  'favorite';
 
 //повторный вызов - выводим список
-$eFavoriteDocs = $modx->getPlaceholder('eFavoriteDocs');
+$eFavoriteDocs = $modx->getPlaceholder('eFavoriteDocs_' . $id);
 if ($eFavoriteDocs && !empty($eFavoriteDocs)) {
     if (isset($params['parents'])) {
         //задан parents - передаем список id как доп.условие - для показа "избранного из категории"
@@ -58,10 +71,11 @@ if ($eFavoriteDocs && !empty($eFavoriteDocs)) {
 $className = isset($params['className']) ? $params['className'] : 'eFavorite';
 require_once MODX_BASE_PATH . "assets/snippets/eFavorite/" . $className . ".class.php";
 $class = "eFavorite\\" . $className;
-$eFavorite = new $class($modx);
-$eFavorite->initJS($params);
+$eFavorite = new $class($modx, $params);
+$eFavorite->init($id);
+$eFavorite->initJS();
 $docs = $eFavorite->getDocList();
-$modx->setPlaceholder('eFavoriteDocs', $docs);
+$modx->setPlaceholder('eFavoriteDocs_' . $id, $docs);
 if (isset($params['setDocsForeFilterOnPage']) && $params['setDocsForeFilterOnPage'] == $modx->documentIdentifier) {
     $modx->setPlaceholder('eFilter_search_ids', $docs);
 }

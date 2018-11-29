@@ -1,20 +1,23 @@
-var eFavorite = {
-    params: {
+var eFavorite = function() {
+    this.start();
+}
+eFavorite.prototype = {
+    defaults: {
         addText: 'добавить в избранное',
         removeText: 'удалить из избранного',
         elementTotalId: 'favorits_cnt',
         elementClass: 'favorite',
         elementActiveClass: 'active',
         lifetime: 2592000,
-        className: 'eFavorite'
+        className: 'eFavorite',
+        id: 'favorite'
     },
-    action: function(id, obj) {
+    action: function(id) {
         var self = this;
         var id = (!!id) ? id : '';
-        var obj = (!!obj) ? obj : false;
-        var data2 = 'action=eFavorite&lifetime=' + this.params.lifetime + '&className=' + this.params.className;
+        var data2 = 'action=eFavorite&lifetime=' + self.params.lifetime + '&className=' + self.params.className + '&id=' + self.params.id;;
         if (id != '') {
-            data2 += '&id=' + id;
+            data2 += '&docid=' + id;
         }
         $.ajax({
             url: "assets/snippets/eFavorite/ajax.php",                                   
@@ -36,18 +39,17 @@ var eFavorite = {
         })
     },
     bind: function() {
-        $(document).on("click", ".favorite", function(){
+        var self = this;
+        $(document).on("click", "." + self.params.elementClass, function(){
             var id = $(this).data("id");
-            eFavorite.action(id, $(this));
+            self.action(id);
         })
     },
     init: function() {
-        this.params = $.extend(this.params, eFavoriteParams);
         this.action();
         this.bind();
+    },
+    start: function() {
+        this.params = $.extend({}, this.defaults);
     }
 };
-
-$(document).ready(function(){
-    eFavorite.init();
-})

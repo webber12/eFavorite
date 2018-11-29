@@ -6,9 +6,19 @@ class eFavorite
     {
         $this->modx = $modx;
         $this->params = $params;
-        $this->cookieName = isset($this->params['cookieName']) ? $this->modx->db->escape($this->params['cookieName']) : 'eFavorite';
-        $this->lifetime = isset($this->params['lifetime']) ? (int)$this->params['lifetime'] : 60 * 60 * 24 * 30;
+    }
+
+    public function init($id = false)
+    {
+        if ($id) {
+            $this->id = $id;
+        } else {
+            $this->id = isset($this->params['id']) ? $this->modx->db->escape($this->params['id']) : 'favorite';
+        }
+        $this->cookieName = isset($this->params['cookieName']) ? $this->modx->db->escape($this->params['cookieName']) : 'eFavorite_' . $this->id;
         $this->f = $this->getFavorites();
+        $this->lifetime = isset($this->params['lifetime']) ? (int)$this->params['lifetime'] : 60 * 60 * 24 * 30;
+        return $this;
     }
     
     public function getFavorites()
@@ -26,15 +36,15 @@ class eFavorite
     public function recountFavorites()
     {
         $f = $this->f;
-        if (isset($_POST['id']) && (int)$_POST['id'] > 0) {
-            $id = (int)$_POST['id'];
-            if (!in_array($id, $f)) {
-                $f[] = $id;
+        if (isset($_POST['docid']) && (int)$_POST['docid'] > 0) {
+            $docid = (int)$_POST['docid'];
+            if (!in_array($docid, $f)) {
+                $f[] = $docid;
             } else {
                 if (count($f) == 1) {
                         $f = array();
                 } else {
-                    $key = array_search($id, $f);
+                    $key = array_search($docid, $f);
                     unset($f[$key]);
                 }
             }
@@ -62,24 +72,29 @@ class eFavorite
         return !empty($this->f) ? implode(',', $this->f) : '4294967295';
     }
 
-    public function initJS($params)
+    public function initJS()
     {
-        $script = 'var eFavoriteParams = {};';
-        $defaults = array('lifetime' => $this->lifetime);
+        $params = $this->params;
+        if (!isset($this->modx->loadedjscripts['efavorite'])) {
+            //prevent double loading
+            $this->modx->regClientScript("assets/snippets/eFavorite/js/eFavorite.js", array("name" => "efavorite"));
+        }
+        $script = "var eFavorite_" . $this->id . " = new eFavorite();" . PHP_EOL;
+        $defaults = array('lifetime' => $this->lifetime, 'id' => $this->id);
         $params = array_merge($defaults, $params);
-        $js_params = array('addText', 'removeText', 'elementTotalId', 'elementClass', 'elementActiveClass', 'lifetime', 'className');
+        $js_params = array('addText', 'removeText', 'elementTotalId', 'elementClass', 'elementActiveClass', 'lifetime', 'className', 'id');
         foreach ($params as $k => $v) {
             if (in_array($k, $js_params)) {
-                $script .= 'eFavoriteParams.' . $k . ' = "' . $v . '";';
+                $script .= 'eFavorite_' . $this->id .'.params.' . $k . ' = "' . $v . '";' . PHP_EOL;
             }
         }
-        $this->modx->regClientScript("<script>" . $script . "</script>", array('plaintext' => true));
-        $this->modx->regClientScript("assets/snippets/eFavorite/js/eFavorite.js");
+        $this->modx->regClientScript("<script>" . $script . "$(document).ready(function(){eFavorite_" . $this->id . ".init()})</script>", array('plaintext' => true));
+        
         if (isset($params['eFilterCallback'])) {
             $this->modx->regClientScript("<script>" . 
                 "function afterFilterComplete(_form) {
                     $(document).ready(function(){
-                        eFavorite.init();
+                        eFavorite_" . $this->id . ".init();
                     })
                 }</script>", array('plaintext' => true));
         }
