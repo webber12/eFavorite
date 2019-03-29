@@ -35,6 +35,9 @@ eFavorite.prototype = {
                 for (var key in rows) {
                     $("." + self.params.elementClass + "[data-id='" + rows[key].id + "']").addClass(self.params.elementActiveClass).attr("title", self.params.removeText);
                 }
+                if (typeof eFavoriteRefresh === 'function') {
+                    eFavoriteRefresh();
+                }
             }
         })
     },
