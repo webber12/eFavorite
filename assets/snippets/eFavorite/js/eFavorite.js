@@ -20,7 +20,7 @@ eFavorite.prototype = {
             data2 += '&docid=' + id;
         }
         $.ajax({
-            url: "assets/snippets/eFavorite/ajax.php",                                   
+            url: "assets/snippets/eFavorite/ajax.php",
             data: data2,
             type: "POST",
             cache: false,
@@ -43,7 +43,8 @@ eFavorite.prototype = {
     },
     bind: function() {
         var self = this;
-        $(document).on("click", "." + self.params.elementClass, function(){
+        $(document).on("click", "." + self.params.elementClass, function(e){
+            e.preventDefault();
             var id = $(this).data("id");
             self.action(id);
         })
